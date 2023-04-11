@@ -1120,6 +1120,22 @@ CLI11_INLINE void App::_process_help_flags(bool trigger_help, bool trigger_all_h
     }
 }
 
+CLI11_INLINE bool App::_missing_needs() const {
+    for(const auto &opt : need_options_) {
+        if(opt->count() == 0) {
+            return true;
+        }
+    }
+
+    for(const auto &subc : need_subcommands_) {
+        if(subc->_missing_needs()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 CLI11_INLINE void App::_process_requirements() {
     // check excludes
     bool excluded{false};
@@ -1242,7 +1258,7 @@ CLI11_INLINE void App::_process_requirements() {
             sub->_process_requirements();
         }
 
-        if(sub->required_ && sub->count_all() == 0) {
+        if((sub->required_ && sub->count_all() == 0) || sub->_missing_needs()) {
             throw(CLI::RequiredError(sub->get_display_name()));
         }
     }

@@ -1234,6 +1234,9 @@ class App {
     /// The flags allow recursive calls to remember if there was a help flag on a parent.
     void _process_help_flags(bool trigger_help = false, bool trigger_all_help = false) const;
 
+    /// Check recursively if there are needed but not specified subcommands or options
+    bool _missing_needs() const;
+
     /// Verify required options and cross requirements. Subcommands too (only if selected).
     void _process_requirements();
 
