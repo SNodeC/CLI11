@@ -1144,27 +1144,26 @@ CLI11_INLINE void App::_process_requirements() {
         return;
     }
 
-    // check excludes
-    bool missing_needed{false};
-    std::string missing_need;
+    // check needs
     for(const auto &opt : need_options_) {
         if(opt->count() == 0) {
-            missing_needed = true;
-            missing_need = opt->get_name();
+            if(count_all() > 0) {
+                throw RequiresError(get_display_name(), opt->get_name());
+            }
+            // if we missing something but didn't have any options, just return
+            return;
         }
     }
     for(const auto &subc : need_subcommands_) {
         if(subc->count_all() == 0) {
-            missing_needed = true;
-            missing_need = subc->get_display_name();
+            if(count_all() > 0) {
+                throw RequiresError(get_display_name(), subc->get_display_name());
+            }
+            // if we missing something but didn't have any options, just return
+            return;
+        } else {
+            subc->_process_requirements();
         }
-    }
-    if(missing_needed) {
-        if(count_all() > 0) {
-            throw RequiresError(get_display_name(), missing_need);
-        }
-        // if we missing something but didn't have any options, just return
-        return;
     }
 
     std::size_t used_options = 0;
