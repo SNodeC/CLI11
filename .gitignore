@@ -18,3 +18,4 @@ a.out*
 
 /subprojects/Catch2-*
 /subprojects/packagecache
+/CMakeLists.txt.user
